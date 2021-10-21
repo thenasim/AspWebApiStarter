@@ -1,7 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Application.Features.Todos;
-using Data.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
