@@ -11,11 +11,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Interfaces" />
-      <Folder Include="Service" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\Data\Data.csproj" />
     </ItemGroup>
 

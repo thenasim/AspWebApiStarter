@@ -3,6 +3,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Api.Config;
 using Application.Features;
+using Application.Interfaces;
+using Application.Service;
 using Data;
 using FluentValidation.AspNetCore;
 using MediatR;
@@ -93,7 +95,11 @@ namespace Api
                         }
                     };
                 });
+            
+            // Custom services
+            services.AddSingleton<IDateTime, DateTimeService>();
 
+            // Controllers and fluentValidation
             services.AddControllers().AddFluentValidation(options =>
             {
                 options.DisableDataAnnotationsValidation = false;
