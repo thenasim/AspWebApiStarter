@@ -1,8 +1,9 @@
-﻿namespace Data.Models
+﻿using Data.Common;
+
+namespace Data.Models
 {
-    public class TodoItem
+    public class TodoItem : BaseModel
     {
-        public int Id { get; set; }
         public string Title { get; set; }
         public bool Completed { get; set; }
     }
