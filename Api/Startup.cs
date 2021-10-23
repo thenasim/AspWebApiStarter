@@ -2,15 +2,18 @@ using System;
 using System.Text;
 using System.Threading.Tasks;
 using Api.Config;
+using Api.Services;
 using Application.Features;
 using Application.Interfaces;
 using Application.Service;
 using Data;
+using Data.Models;
 using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -51,10 +54,14 @@ namespace Api
             // Automapper
             services.AddAutoMapper(typeof(PingQuery).Assembly);
             
-            // TODO: Add Identity
-            /*services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>();*/
-            
+            // User Manager Services
+            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+                {
+                    options.SignIn.RequireConfirmedAccount = false;
+                    options.SignIn.RequireConfirmedEmail = false;
+                })
+                .AddEntityFrameworkStores<ApplicationDbContext>();
+
             // Mediatr
             services.AddMediatR(typeof(PingQuery).Assembly);
             
@@ -96,8 +103,11 @@ namespace Api
                     };
                 });
             
-            // Custom services
+            // App services
             services.AddSingleton<IDateTime, DateTimeService>();
+            
+            // Api Services
+            //services.AddHostedService<SeedIdentityData>();
 
             // Controllers and fluentValidation
             services.AddControllers().AddFluentValidation(options =>
