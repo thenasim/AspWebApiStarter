@@ -1,6 +1,6 @@
 ﻿using Application.Features.Todos;
 using AutoMapper;
-using Data.Models;
+using Data.Entities;
 
 namespace Application.Mappers
 {
@@ -10,8 +10,8 @@ namespace Application.Mappers
         {
             CreateMap<CreateTodoItemCommand, TodoItem>()
                 .ForMember(
-                    s => s.Completed,
-                    d => d.MapFrom(s => false));
+                    d => d.Completed,
+                    s => s.MapFrom(sc => false));
         }
     }
 }

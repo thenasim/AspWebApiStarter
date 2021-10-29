@@ -1,13 +1,12 @@
 using System;
 using System.Text;
 using System.Threading.Tasks;
-using Api.Config;
-using Api.Services;
+using Application.Config;
 using Application.Features;
 using Application.Interfaces;
-using Application.Service;
+using Application.Services;
 using Data;
-using Data.Models;
+using Data.Entities;
 using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -105,6 +104,7 @@ namespace Api
             
             // App services
             services.AddSingleton<IDateTime, DateTimeService>();
+            services.AddScoped<IJwtService, JwtService>();
             
             // Api Services
             //services.AddHostedService<SeedIdentityData>();

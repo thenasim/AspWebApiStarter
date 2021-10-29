@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using AutoMapper;
 using Data;
-using Data.Models;
+using Data.Entities;
 using FluentValidation;
 using MediatR;
 
@@ -24,12 +24,12 @@ namespace Application.Features.Todos
         }
     }
 
-    public class CreateTodoItemHandler : IRequestHandler<CreateTodoItemCommand, int>
+    public class CreateTodoItemCommandHandler : IRequestHandler<CreateTodoItemCommand, int>
     {
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
 
-        public CreateTodoItemHandler(ApplicationDbContext context, IMapper mapper)
+        public CreateTodoItemCommandHandler(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;

@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Data;
-using Data.Models;
+using Data.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 

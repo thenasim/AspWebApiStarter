@@ -1,6 +1,6 @@
 ﻿using Data.Common;
 
-namespace Data.Models
+namespace Data.Entities
 {
     public class TodoItem : BaseModel
     {

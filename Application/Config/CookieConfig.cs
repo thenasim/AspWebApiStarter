@@ -1,4 +1,4 @@
-﻿namespace Api.Config
+﻿namespace Application.Config
 {
     public class CookieConfig
     {
