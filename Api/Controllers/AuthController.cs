@@ -26,7 +26,7 @@ namespace Api.Controllers
         }
 
         [HttpGet("secret")]
-        [Authorize]
+        [Authorize(Roles = "User")]
         public async Task<IActionResult> Secret()
         {
             return Ok(await Task.FromResult("Secret page"));
