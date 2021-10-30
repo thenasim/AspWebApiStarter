@@ -48,8 +48,8 @@ namespace Application.Services
             var signingCredentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
 
             var jwtSecurityToken = new JwtSecurityToken(
-                issuer: _jwtConfig.Issuer,
-                audience: _jwtConfig.Audience,
+                //issuer: _jwtConfig.Issuer,
+                //audience: _jwtConfig.Audience,
                 claims: claims,
                 expires: DateTime.UtcNow.AddMinutes(_jwtConfig.DurationInMinutes),
                 signingCredentials: signingCredentials);

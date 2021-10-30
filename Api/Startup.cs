@@ -89,7 +89,7 @@ namespace Api
                         //ValidIssuer = jwtConfig.Issuer,
                         //ValidAudience = jwtConfig.Audience,
                         ClockSkew = TimeSpan.Zero,
-                        RequireExpirationTime = false,
+                        RequireExpirationTime = true,
                     };
 
                     options.Events = new JwtBearerEvents()

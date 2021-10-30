@@ -1,38 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
-using Application.Config;
 using Application.Features.Models;
 using Application.Interfaces;
 using AutoMapper;
 using Data.Entities;
-using Data.Enums;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
 namespace Application.Features.Users
 {
-    public class CreateUserCommand : IRequest<AuthModel>
-    {
-        public string Email { get; set; }
-        public string Password { get; set; }
-        public Roles Role { get; set; }
-    }
-
-    public class CreateUserCommandDto
+    public class LoginUserQuery : IRequest<AuthModel>
     {
         public string Email { get; set; }
         public string Password { get; set; }
     }
 
-    public class ValidateCreateUserCommand : AbstractValidator<CreateUserCommandDto>
+    public class ValidateLoginUserQuery : AbstractValidator<LoginUserQuery>
     {
-        public ValidateCreateUserCommand()
+        public ValidateLoginUserQuery()
         {
             RuleFor(x => x.Email)
                 .EmailAddress();
@@ -44,13 +32,13 @@ namespace Application.Features.Users
         }
     }
 
-    public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, AuthModel>
+    public class LoginUserQueryHandler : IRequestHandler<LoginUserQuery, AuthModel>
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IMapper _mapper;
         private readonly IJwtService _jwtService;
 
-        public CreateUserCommandHandler(
+        public LoginUserQueryHandler(
             UserManager<ApplicationUser> userManager, 
             IMapper mapper,
             IJwtService jwtService)
@@ -60,54 +48,50 @@ namespace Application.Features.Users
             _jwtService = jwtService;
         }
         
-        public async Task<AuthModel> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+        public async Task<AuthModel> Handle(LoginUserQuery request, CancellationToken cancellationToken)
         {
-            // Check if user already exists
+            // Check if user exists
             var existingUser = await _userManager.FindByEmailAsync(request.Email);
-            if (existingUser is not null)
+            if (existingUser is null)
             {
                 return new AuthModel()
                 {
                     Messages = new List<string>()
                     {
-                        $"Email already exists"
+                        $"Invalid credentials"
+                    },
+                    IsAuthenticated = false,
+                };
+            }
+
+            var checkPassword = await _userManager.CheckPasswordAsync(existingUser, request.Password);
+            if (checkPassword == false)
+            {
+                return new AuthModel()
+                {
+                    Messages = new List<string>()
+                    {
+                        $"Invalid credentials"
                     },
                     IsAuthenticated = false,
                 };
             }
             
-            // Map command to user and create user
-            var mappedUser = _mapper.Map<CreateUserCommand, ApplicationUser>(request);
             
-            // Try to create new user
-            var createUser = await _userManager.CreateAsync(mappedUser, request.Password);
-            if (createUser.Succeeded == false)
-            {
-                return new AuthModel()
-                {
-                    Messages = createUser.Errors.Select(x => x.Description).ToList(),
-                    IsAuthenticated = false,
-                };
-            }
+            var jwtToken = await _jwtService.GenerateToken(existingUser);
 
-            // Add role to user
-            await _userManager.AddToRoleAsync(mappedUser, request.Role.ToString());
-            
-            // Generate token
-            var jwtToken = await _jwtService.GenerateToken(mappedUser);
-
-            var roles = await _userManager.GetRolesAsync(mappedUser).ConfigureAwait(false);
+            var roles = await _userManager.GetRolesAsync(existingUser).ConfigureAwait(false);
 
             return new AuthModel()
             {
                 Messages = new List<string>()
                 {
-                    "Registration completed successfully"
+                    "Login successfully"
                 },
                 IsAuthenticated = true,
                 Token = jwtToken,
-                UserName = mappedUser.UserName,
-                Email = mappedUser.Email,
+                UserName = existingUser.UserName,
+                Email = existingUser.Email,
                 Roles = roles.ToList()
             };
         }
